@@ -769,17 +769,17 @@ const ludeng = () => {
     let n = 2
     let str = '50 70 20 70'
     let strArr = str.split(' ').map(n => Number(n))
-    let left = 0,right = left + 1
+    let left = 0, right = left + 1
     let ans = 0
     while (right < strArr.length) {
         let l = strArr[left]
         let r = strArr[right]
-        let differ = (l + r) -100
-        if(differ < 0) {
-            ans+=Math.abs(differ)
+        let differ = (l + r) - 100
+        if (differ < 0) {
+            ans += Math.abs(differ)
         }
         left++
-        right = left+1
+        right = left + 1
     }
     console.log(ans)
 }
@@ -797,9 +797,9 @@ const ludeng = () => {
 const ziranshu = (Sn) => {
     let X = 0
     // n为 项数
-    for (let n = 1; n*(n + 1) <= 2*Sn ; n++) {
-        if((2*Sn - n*(n-1)) % (2*n) === 0) {
-            let a1 = (2*Sn - n*(n-1)) / (2*n)
+    for (let n = 1; n * (n + 1) <= 2 * Sn; n++) {
+        if ((2 * Sn - n * (n - 1)) % (2 * n) === 0) {
+            let a1 = (2 * Sn - n * (n - 1)) / (2 * n)
             let ans = []
             for (let i = 0; i < n; i++) {
                 ans.push(a1++)
@@ -811,4 +811,34 @@ const ziranshu = (Sn) => {
     console.log(`Result:${X}`)
 }
 
-ziranshu(100)
+// ziranshu(100)
+
+// 减半分糖果
+const halfTangguo = (n) => {
+    let count = 0
+    const innerLoop = (n) => {
+        if(n === 1) {
+            return
+        }
+        if(n % 2 === 0) {
+            // 可以分配
+             n = n / 2
+            count++
+        }else {
+            // 拿一个或者放回一个 减半后是否是偶数
+            let num1 = (n - 1) / 2
+            let num2 = (n + 1) / 2
+            if(num1 % 2 === 0) {
+                n = num1
+            }else {
+                n = num2
+            }
+            count+=2
+
+        }
+        innerLoop(n)
+    }
+    innerLoop(n)
+    console.log(count)
+}
+halfTangguo(101)
