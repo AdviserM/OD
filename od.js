@@ -817,23 +817,23 @@ const ziranshu = (Sn) => {
 const halfTangguo = (n) => {
     let count = 0
     const innerLoop = (n) => {
-        if(n === 1) {
+        if (n === 1) {
             return
         }
-        if(n % 2 === 0) {
+        if (n % 2 === 0) {
             // 可以分配
-             n = n / 2
+            n = n / 2
             count++
-        }else {
+        } else {
             // 拿一个或者放回一个 减半后是否是偶数
             let num1 = (n - 1) / 2
             let num2 = (n + 1) / 2
-            if(num1 % 2 === 0) {
+            if (num1 % 2 === 0) {
                 n = num1
-            }else {
+            } else {
                 n = num2
             }
-            count+=2
+            count += 2
 
         }
         innerLoop(n)
@@ -841,4 +841,129 @@ const halfTangguo = (n) => {
     innerLoop(n)
     console.log(count)
 }
-halfTangguo(101)
+// halfTangguo(101)
+
+// 消消乐
+const xiaoxiaole = () => {
+    let str = 'mMb4235ccbc'
+    let reg = /^[a-zA-Z]+$/
+    if (!reg.test(str)) {
+        return console.log(0)
+    }
+    let stacks = []
+    for (const s of str) {
+        if (stacks.length > 0) {
+            let end = stacks.pop()
+            if (end !== s) {
+                stacks.push(end)
+                stacks.push(s)
+            }
+        } else {
+            stacks.push(s)
+        }
+    }
+    console.log(stacks)
+}
+
+// 补种胡杨树
+const buzhonghuyang = () => {
+    let n = 10
+    let nArr = new Array(n).fill('').map(n => Number(n + 1))
+    let m = '2 4 7'
+    let l = 1
+    let count = 0
+    /*
+        思路 滑动窗口 保持窗口内有l个空位 找到最大窗口
+        1,a2,3,a4,5,6,a7,8,9,10
+    * */
+
+
+    let left = 1, right = 2
+    while (right <= n) {
+        let sub = nArr.slice(left, right)
+        let count = sub.filter(v => {
+            return m.includes(v)
+        }).length
+        if (count > l) {
+            left++
+        } else {
+
+        }
+        right++
+        console.log(count)
+    }
+}
+// buzhonghuyang()
+
+// GPU 执行最短时长
+const minTime = () => {
+    let task = '1 2 3 4 5'
+    let n = 3
+    let tasks = task.split(' ').map(n => Number(n)).sort((a,b) => b -a)
+    let ans = []
+    // const findMax = (m) => {
+    //     for (let i = 0; i < tasks.length;i++) {
+    //         let t = tasks[i]
+    //         if((m + t) % n === 0) {
+    //             tasks.splice(i,1)
+    //             return t
+    //         }
+    //     }
+    //     return false
+    // }
+    // // 两两相加 等于 n的倍数 或者自己是n的倍数
+    // while (tasks.length > 0) {
+    //     // 取出头部
+    //     let head = tasks.shift()
+    //     let compare = findMax(head)
+    //     if(compare) {
+    //         ans.push(head,compare)
+    //     }else {
+    //         ans.push(head)
+    //     }
+    // }
+    let time = 0,left = 0
+    while (tasks.length > 0) {
+        let head = tasks.shift()
+        let t = left + head
+        if(t <= n) {
+            time++
+            left = 0
+            continue
+        }
+        time += Math.floor(t / n)
+        left = t % n
+    }
+    console.log(time)
+}
+// minTime()
+
+/*
+*  按身高体重排序
+* */
+const hwSort = () => {
+    let n = 4
+    let height = '90 110 90'.split(' ').map(n => Number(n))
+    let weight = '45 60 45'.split(' ').map(n => Number(n))
+    let memberArr = height.map((item,index) => {
+        return {
+            no:index+1,
+            height:item,
+            weight:weight[index]
+        }
+    })
+    memberArr.sort((a,b) => {
+        let flag1 =  a.height > b.height
+        let flag2 = (b.height === a.height) && a.weight > b.weight
+        let flag3 = (b.height === a.height) && (a.weight === b.weight)
+        if( flag1 || flag2) {
+            return 1
+        }else if(flag3) {
+            return 0
+        }else {
+            return -1
+        }
+    })
+    console.log(memberArr.map(item => item.no).join(' '))
+}
+hwSort()
