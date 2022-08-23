@@ -899,7 +899,7 @@ const buzhonghuyang = () => {
 const minTime = () => {
     let task = '1 2 3 4 5'
     let n = 3
-    let tasks = task.split(' ').map(n => Number(n)).sort((a,b) => b -a)
+    let tasks = task.split(' ').map(n => Number(n)).sort((a, b) => b - a)
     let ans = []
     // const findMax = (m) => {
     //     for (let i = 0; i < tasks.length;i++) {
@@ -922,11 +922,11 @@ const minTime = () => {
     //         ans.push(head)
     //     }
     // }
-    let time = 0,left = 0
+    let time = 0, left = 0
     while (tasks.length > 0) {
         let head = tasks.shift()
         let t = left + head
-        if(t <= n) {
+        if (t <= n) {
             time++
             left = 0
             continue
@@ -945,25 +945,188 @@ const hwSort = () => {
     let n = 4
     let height = '90 110 90'.split(' ').map(n => Number(n))
     let weight = '45 60 45'.split(' ').map(n => Number(n))
-    let memberArr = height.map((item,index) => {
+    let memberArr = height.map((item, index) => {
         return {
-            no:index+1,
-            height:item,
-            weight:weight[index]
+            no: index + 1,
+            height: item,
+            weight: weight[index]
         }
     })
-    memberArr.sort((a,b) => {
-        let flag1 =  a.height > b.height
+    memberArr.sort((a, b) => {
+        let flag1 = a.height > b.height
         let flag2 = (b.height === a.height) && a.weight > b.weight
         let flag3 = (b.height === a.height) && (a.weight === b.weight)
-        if( flag1 || flag2) {
+        if (flag1 || flag2) {
             return 1
-        }else if(flag3) {
+        } else if (flag3) {
             return 0
-        }else {
+        } else {
             return -1
         }
     })
     console.log(memberArr.map(item => item.no).join(' '))
 }
-hwSort()
+// hwSort()
+
+// 流水线
+const liushuixian = () => {
+    let n = 3
+    let tasks = "8 4 3 2 10".split(' ').map(n => Number(n)).sort((a, b) => {
+        return a - b
+    })
+    console.log(tasks)
+    // 模拟过程
+    let map = {}
+    const findMin = () => {
+        let min = undefined, index = null
+        for (const mapKey in map) {
+            let item = map[mapKey]
+            if (min === undefined) {
+                min = item
+                index = mapKey
+                continue
+            }
+            if (item < min) {
+                index = mapKey
+                min = item
+            }
+        }
+        return index
+    }
+    for (let i = 0; i < tasks.length; i++) {
+        let cur = tasks[i]
+        if (i < n) {
+            // 预先分派
+            map[i] = cur
+        } else {
+            // 找到最小的进行分派 sum
+            let j = findMin()
+            map[j] += cur
+        }
+    }
+    const findMax = () => {
+        let max = undefined, target = null
+        for (const mapKey in map) {
+            let item = map[mapKey]
+            if (max === undefined) {
+                max = item
+                target = item
+                continue
+            }
+            if (item > max) {
+                target = item
+                max = item
+            }
+        }
+        return target
+    }
+    let max = findMax()
+
+    console.log(max)
+}
+
+// liushuixian()
+
+// 字符串比较
+const strduibi = () => {
+    // 滑动窗口题
+    let str1 = 'xxcdefg'
+    let str2 = 'cdefghi'
+    let v = 5
+    let left = 0, right = left + 1
+    const sum = (left, right) => {
+        let ans = 0
+        for (let i = left; i < right; i++) {
+            let diff = Math.abs(str1[i].charCodeAt(0) - str2[i].charCodeAt(0))
+            ans += diff
+        }
+        return ans
+    }
+    let ans = ''
+    while (right <= str1.length) {
+        let subStr = str1.substring(left, right)
+        if (str2.includes(subStr) && sum(left, right) <= v) {
+            left++
+            right = left + 1
+            if (subStr.length > ans.length) {
+                ans = subStr
+            }
+        } else {
+            if (right === str1.length) {
+                left++
+                right = left
+            }
+            right++
+        }
+    }
+    console.log(ans)
+}
+// strduibi()
+
+
+// 字符串解压
+const jieyazifuchuan = () => {
+    let str = '3abb4cd'
+    let numReg = /[0-9]+/
+    let enReg = /[a-z]+/
+    let num = 0
+    let temp = ''
+    let ans = ''
+    const depress = () => {
+        let t = temp.repeat(num)
+        num = 0
+        temp = ''
+        ans += t
+    }
+    for (let i = 0; i < str.length; i++) {
+        let cur = str[i]
+
+        if (numReg.test(cur)) {
+            num = num * 10 + parseInt(cur)
+        } else if (enReg.test(cur)) {
+            temp += cur
+        }
+        if (i !== str.length - 1) {
+            let next = str[i + 1]
+            if (enReg.test(cur) && numReg.test(next)) {
+                depress()
+            }
+        }
+        if (enReg.test(cur) && i === str.length - 1) {
+            // 解压
+            depress()
+        }
+    }
+    console.log(ans)
+}
+// jieyazifuchuan()
+
+
+//最远足迹
+const zuiyuanzuji = () => {
+    let str = 'ferg(0,10)a13fdsf3(3,4)f2r3rfasf(5,0)'
+    let reg = /\([^)]+\)/g
+    let positions = str.match(reg)
+    const validate = (str) => {
+        let reg = /[()]+/g
+        let arr = str.replace(reg,'').split(',')
+        let flag = arr.some(item => {
+            return item.startsWith('0')
+        })
+        if(flag) {
+            return !flag
+        }else {
+            return arr[0] * arr[0] + arr[1] * arr[1]
+        }
+    }
+    let maxStr = '',maxNum = 0
+    for (const position of positions) {
+        let flag = validate(position)
+        if(flag && flag > maxNum) {
+            maxNum = flag
+            maxStr = position
+        }
+    }
+    console.log(maxStr)
+}
+zuiyuanzuji()
