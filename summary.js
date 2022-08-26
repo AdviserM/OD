@@ -144,6 +144,7 @@ const api = () => {
     ''.charAt()
     ''.charCodeAt()
     String.fromCharCode()
+    Number.MAX_SAFE_INTEGER
     // Array.sort
     // 1 b 在 a前面 -1 a 在 b 前面 0 不动
 }

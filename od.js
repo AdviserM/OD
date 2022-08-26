@@ -805,13 +805,13 @@ const ziranshu = (Sn) => {
                 ans.push(a1++)
             }
             X++
-            console.log(`${Sn}=${ans.join('+')}`)
+            // console.log(`${Sn}=${ans.join('+')}`)
         }
     }
     console.log(`Result:${X}`)
 }
 
-// ziranshu(100)
+// ziranshu(Number.MAX_SAFE_INTEGER)
 
 // 减半分糖果
 const halfTangguo = (n) => {
@@ -1109,24 +1109,232 @@ const zuiyuanzuji = () => {
     let positions = str.match(reg)
     const validate = (str) => {
         let reg = /[()]+/g
-        let arr = str.replace(reg,'').split(',')
+        let arr = str.replace(reg, '').split(',')
         let flag = arr.some(item => {
             return item.startsWith('0')
         })
-        if(flag) {
+        if (flag) {
             return !flag
-        }else {
+        } else {
             return arr[0] * arr[0] + arr[1] * arr[1]
         }
     }
-    let maxStr = '',maxNum = 0
+    let maxStr = '', maxNum = 0
     for (const position of positions) {
         let flag = validate(position)
-        if(flag && flag > maxNum) {
+        if (flag && flag > maxNum) {
             maxNum = flag
             maxStr = position
         }
     }
     console.log(maxStr)
 }
-zuiyuanzuji()
+
+// zuiyuanzuji()
+
+// vlan资源池
+const vlan = () => {
+    let str = '1-5'
+    let target = 2
+    let strArr = str.split(',')
+    const decode = (arr = []) => {
+        let a = arr.reduce((pre, cur) => {
+            if (cur.includes('-')) {
+                let [head, end] = cur.split('-')
+                head = Number(head)
+                end = Number(end)
+                let brr = new Array(end - head + 1).fill(0).map((r, i) => {
+                    return i + head
+                })
+                pre = [...pre, ...brr]
+            } else {
+                pre.push(Number(cur))
+            }
+            return pre
+        }, [])
+        a.sort((a, b) => {
+            return a - b
+        })
+        return a
+    }
+    const encode = (arr = []) => {
+        let tempStack = [], ans = []
+        for (let i = 0; i < arr.length; i++) {
+            let cur = arr[i]
+            if (i > 0) {
+                let pre = arr[i - 1]
+                if (cur - pre === 1) {
+                    tempStack.push(cur)
+                } else {
+                    // 清空
+                    if (tempStack.length === 1) {
+                        ans.push(tempStack[0])
+                    } else {
+                        ans.push(`${tempStack[0]}-${tempStack[tempStack.length - 1]}`)
+                    }
+                    tempStack = [cur]
+                }
+                if (i === arr.length - 1 && tempStack.length > 0) {
+                    if (tempStack.length === 1) {
+                        ans.push(tempStack[0])
+                    } else {
+                        ans.push(`${tempStack[0]}-${tempStack[tempStack.length - 1]}`)
+                    }
+                }
+            } else {
+                tempStack.push(cur)
+            }
+        }
+        return ans
+    }
+    let nArr = decode(strArr)
+    if (nArr.includes(target)) {
+        let index = nArr.findIndex(item => item === target)
+        nArr.splice(index, 1)
+    }
+    return encode(nArr).join(',')
+}
+console.time('a')
+
+// 真实车费
+const realMoney = (num = 0) => {
+    let count = 0
+    for (let i = 1; i <= num; i++) {
+        if (i.toString().includes('4')) {
+            count++
+        }
+    }
+    return num + count
+}
+
+// 重要 考前背一下
+const realMoneyFast = (N = 0) => {
+    let ans = N, temp = 0, k = 0, j = 1;
+    while (N > 0) {						//	100	10			1
+        if ((N % 10) > 4) {
+            temp += ((N % 10) - 1) * k + j;
+        } else {
+            temp += (N % 10) * k;		//	0	0			1*19
+        }
+        k = k * 9 + j;					//	1	1*9+10=19
+        j = j * 10;						//	10	100
+        N = N / 10;						//	10	1
+    }
+    console.log(temp)
+    // return ans - temp
+}
+// console.log(realMoney(50000))
+// console.timeEnd('a')
+
+/*
+*  Sn = na1 + n(n - 1)*d / 2     2Sn = 2na1 + n(n-1)    a1 = (2Sn - n(n - 1)) / 2n
+*   2Sn = 2n + n(n-1)    2Sn = n(n+1)  n(n+1) <= 2Sn
+* */
+const lianxu = (Sn = 0) => {
+    for (let n = 1; n * (n + 1) <= 2 * Sn; n++) {
+        if ((2 * Sn - n * (n - 1)) % (2 * n) === 0) {
+            let a1 = (2 * Sn - n * (n - 1)) / (2 * n)
+            let ans = []
+            for (let i = 0; i < n; i++) {
+                ans.push(a1++)
+            }
+            console.log(ans.join('+'))
+        }
+    }
+}
+// lianxu(10)
+
+
+// 正方形的数量
+/*
+* 已知：正方形的两个点 (x1,y1)  (x2,y2)
+则：正方形另外两个点的坐标为
+x3=x1+(y1-y2)   y3= y1-(x1-x2)
+x4=x2+(y1-y2)   y4= y2-(x1-x2)
+或
+x3=x1-(y1-y2)   y3= y1+(x1-x2)
+x4=x2-(y1-y2)   y4= y2+(x1-x2)
+从另一位博主的文章中学到这一计算公式
+原文链接：https://blog.csdn.net/qq_40507857/article/details/84205680
+通过上述的公式，只要枚举两个顶点，根据这两个顶点计算出要满足正方形需要的剩下两个顶点，然后判断该顶点是否在输入的列表中是否存在，如果都存在则方案数+1，最后所得方案数要除以4，因为一个正方形有四条边，每条边都会对这个正方形判断一次。
+*
+* */
+const squeNum = () => {
+    let N = 4
+    let str = `0 0
+1 2
+3 1
+2 -1`
+    if (N < 4) return 0
+    let strArr = str.split('\n').map(item => {
+        let [x, y] = item.split(' ')
+        x = Number(x)
+        y = Number(y)
+        return [x, y]
+    })
+    const findTarget = (target) => {
+        let flag = strArr.find(item => {
+            return target[0] === item[0] && target[1] === item[1]
+        })
+        return !!flag
+    }
+    let count = 0
+    for (let i = 0; i < strArr.length; i++) {
+        let [x1, y1] = strArr[i]
+        for (let j = i + 1; j < strArr.length; j++) {
+            let [x2, y2] = strArr[j]
+            let x3_1 = x1 + (y1 - y2)
+            let y3_1 = y1 - (x1 - x2)
+            let x4_1 = x2 + (y1 - y2)
+            let y4_1 = y2 - (x1 - x2)
+            if (findTarget([x3_1, y3_1]) && findTarget([x4_1, y4_1])) {
+                count++
+            }
+            let x3_2 = x1 - (y1 - y2)
+            let y3_2 = y1 + (x1 - x2)
+            let x4_2 = x2 - (y1 - y2)
+            let y4_2 = y2 + (x1 - x2)
+
+            if (findTarget([x3_2, y3_2]) && findTarget([x4_2, y4_2])) {
+                count++
+            }
+        }
+    }
+    // 枚举每两个顶点 求出另外两个点 假如剩下的点里边有,那么就是一个正方形
+    console.log(count)
+}
+// squeNum()
+
+
+// 求最多可以派出多少支团队
+
+const maxtuandui = () => {
+    let max = 8
+    let count = 0
+    let str = '1 1 9'
+    let strArr = str.split(' ').map(n => Number(n)).sort((a,b) => b - a)
+    console.log(strArr)
+    // 最符合 假如当前数小于 目标数 寻找另一个数的差值最小
+    const mostConform = (target = 0) => {
+        for (let i = strArr.length - 1; i >= 0; i--) {
+            let r = strArr[i]
+            let sum = target + r
+            if(sum >= max) {
+                count++
+                strArr.splice(i,1)
+                return true
+            }
+        }
+    }
+    // 贪心算法
+    while (strArr.length > 0) {
+        let head = strArr.shift()
+        if(head >= max) {
+            count++
+        }else {
+            mostConform(head)
+        }
+    }
+    console.log(count)
+}
+maxtuandui()
