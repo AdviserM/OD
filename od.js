@@ -336,7 +336,7 @@ const houzipashan = (n) => {
     }
     return innerLoop(n)
 }
-// console.log(houzipashan(3))
+console.log(houzipashan(50))
 
 // 统计停车场
 const tichechang = () => {
@@ -974,7 +974,7 @@ const liushuixian = () => {
     let tasks = "8 4 3 2 10".split(' ').map(n => Number(n)).sort((a, b) => {
         return a - b
     })
-    console.log(tasks)
+    // console.log(tasks)
     // 模拟过程
     let map = {}
     const findMin = () => {
@@ -1025,7 +1025,7 @@ const liushuixian = () => {
     console.log(max)
 }
 
-// liushuixian()
+liushuixian()
 
 // 字符串比较
 const strduibi = () => {
@@ -1312,16 +1312,16 @@ const maxtuandui = () => {
     let max = 8
     let count = 0
     let str = '1 1 9'
-    let strArr = str.split(' ').map(n => Number(n)).sort((a,b) => b - a)
+    let strArr = str.split(' ').map(n => Number(n)).sort((a, b) => b - a)
     console.log(strArr)
     // 最符合 假如当前数小于 目标数 寻找另一个数的差值最小
     const mostConform = (target = 0) => {
         for (let i = strArr.length - 1; i >= 0; i--) {
             let r = strArr[i]
             let sum = target + r
-            if(sum >= max) {
+            if (sum >= max) {
                 count++
-                strArr.splice(i,1)
+                strArr.splice(i, 1)
                 return true
             }
         }
@@ -1329,12 +1329,255 @@ const maxtuandui = () => {
     // 贪心算法
     while (strArr.length > 0) {
         let head = strArr.shift()
-        if(head >= max) {
+        if (head >= max) {
             count++
-        }else {
+        } else {
             mostConform(head)
         }
     }
     console.log(count)
 }
-maxtuandui()
+// maxtuandui()
+
+
+// 数组拼接
+const concatArr = () => {
+    let n = 3
+    let str = `2,5,6,7,9,5,7
+1,7,4,3,4
+1,5,6,7,8,90,2`
+    let strArr = str.split('\n').map((r) => {
+        return r.split(',')
+    })
+    let ans = []
+    while (strArr.length > 0) {
+        let head = strArr.shift()
+        if (head.length >= n) {
+            let spliceArr = head.splice(0, n)
+            ans = ans.concat(spliceArr)
+        } else if (head.length > 0) {
+            ans = ans.concat([...head])
+            head = []
+        }
+        if (head.length > 0) {
+            strArr.push(head)
+        }
+    }
+    console.log(ans)
+}
+// concatArr()
+
+// 路灯照明问题
+const ludeng2 = () => {
+    let n = 8
+    let str = '10 10 10 250 10 10 10 10'
+    let strArr = str.split(' ')
+    // 默认是黑暗的
+    let lights = new Array((n - 1) * 100).fill('0')
+    const light = () => {
+        for (let i = 0; i < strArr.length; i++) {
+            let item = strArr[i]
+            for (let j = 0; j < Number(item); j++) {
+                let index = i * 100 + j
+                if (index >= 0 && index <= (n - 1) * 100 - 1) {
+                    // 点灯
+                    lights[index] = 1
+                }
+            }
+        }
+    }
+    light()
+    strArr.reverse()
+    lights.reverse()
+    light()
+    console.log(lights.join('').replace(/1/g, '').length)
+}
+// ludeng2()
+
+// 素数之积
+const susuziji = (n = 0) => {
+    const isZhi = (m) => {
+        if (m <= 3) {
+            return m > 1
+        }
+        for (let i = 2; i <= Math.sqrt(m); i++) {
+            if (m % i === 0) {
+                // 可以被整除
+                return false
+            }
+        }
+        return true
+    }
+    let a, b
+    for (let i = 2; i <= Math.sqrt(n);) {
+        if (n % i === 0) {
+            if (isZhi(i)) {
+                let other = n / i
+                if (isZhi(other)) {
+                    a = i
+                    b = other
+                }
+            }
+        }
+        if (i === 2) {
+            i++
+        } else {
+            i += 2
+        }
+    }
+    console.log(a, b)
+}
+// susuziji(15)
+
+// 最大公约数
+const gcd = (a, b) => {
+    if (b === 0) {
+        return a
+    }
+    return gcd(b, a % b)
+}
+
+// 多个数的最大公约数
+const ngcd = (arr = []) => {
+    let [a, b] = arr.splice(0, 2)
+    let g = gcd(a, b)
+    arr.forEach(item => {
+        g = gcd(g, item)
+    })
+    return g
+}
+
+// 最小公倍数
+const lcm = (a, b) => {
+    return (a * b) / gcd(a, b)
+}
+
+// 多个最小公倍数
+const nlcm = (arr) => {
+    const [a, b] = arr.splice(0, 2)
+    let l = lcm(a, b)
+    for (const ar of arr) {
+        l = lcm(ar, l)
+    }
+    return l
+}
+
+
+const jiyabaowen = (str = '3[m2[c]]') => {
+    let numStacks = []
+    let strStacks = []
+    let ans = '', num = 0
+    let numReg = /[0-9]+/
+    for (const s of str) {
+        if (numReg.test(s)) {
+            // 是数字
+            num = num * 10 + parseInt(s)
+        } else if (s === '[') {
+            numStacks.push(num)
+            strStacks.push(ans)
+            num = 0
+            ans = ''
+        } else if (s === ']') {
+            // 解压
+            let num = numStacks.pop()
+            let repeatStr = ans.repeat(num)
+            ans = strStacks.pop() + repeatStr
+        } else {
+            ans += s
+        }
+    }
+    return ans
+}
+
+// console.log(jiyabaowen('3[k]2[mn]'))
+
+
+/**
+ * 01背包问题 体积 价值 求最大体积下的最大价值
+ * @param {Array} weights 物体体积数组
+ * @param {Array} values 物品价值数组
+ * @param {Number} W 最大体积数
+ */
+function knapsack(weights, values, W) {
+    const n = weights.length;
+    const f = new Array(W + 1).fill(0);
+    for (let i = 0; i < n; i++) {
+        for (let j = W; j >= weights[i]; j--) {
+            f[j] = Math.max(f[j], f[j - weights[i]] + values[i]);
+        }
+    }
+    return f[W];
+}
+
+/*
+* 无重复字符的最大子串
+* */
+const lengthOfLongestSubstring = function (str) {
+    if (str.length <= 1) {
+        return str.length
+    }
+    let left = 0;let right = 1;let max = 0;let temp
+    while (right < str.length) {
+        temp = str.slice(left, right)
+        if (temp.includes(str[right])) {
+            left++
+            continue
+        } else {
+            right++
+        }
+        max = Math.max(right - left, max)
+    }
+    return max
+};
+
+//以矩形左上角的点为基点，x为横坐标，y为纵坐标，w为矩形的宽度，h为矩形的高度
+let recA = {x: 1, y: 6, w: 4, h: 4}
+function getRect(recA, recB) {	//求出两个矩形相交形成的矩形
+    let rectLeft = null,rectRight = null,rectTop = null,rectBottom = null;
+    if (recA.x < recB.x) {
+        rectLeft = recA
+        rectRight = recB
+    } else {
+        rectRight = recA
+        rectLeft = recB
+    }
+    if (rectLeft.x + rectLeft.w <= rectRight.x) {
+        return {x: -1, y: -1, w: -1, h: -1}
+    }
+    if (recA.y < recB.y) {
+        rectTop = recB
+        rectBottom = recA
+    } else {
+        rectTop = recA
+        rectBottom = recB
+    }
+    if (rectBottom.y + rectBottom.h <= rectTop.x) {
+        return {x: -1, y: -1, w: -1, h: -1}
+    }
+    return { // 返回相交的矩形 两两比较
+        x: rectRight.x,
+        y: rectBottom.y,
+        w: (rectLeft.x + rectLeft.w) < (rectRight.x + rectRight.w) ? (rectLeft.x + rectLeft.w - rectRight.x) : (rectRight.x + rectRight.w - rectRight.x),
+        h: (rectBottom.y + rectBottom.h) < (rectTop.y + rectTop.h) ? (rectBottom.y + rectBottom.h - rectTop.y) : (rectTop.y + rectTop.h - rectTop.y)
+    }
+}
+let str = `1 6 4 4
+3 5 3 4
+0 3 7 3`
+let strArr = str.split('\n').map(item => {
+    let [x,y,w,h] = item.split(' ').map(n => Number(n))
+    return {x,y,w,h}
+})
+// let a = getRect(strArr[0],strArr[1])
+// let b = getRect(strArr[2],a)
+// console.log(b)
+/**,爬楼梯 猴子爬山 1或2
+ * @param {number} n
+ * @return {number}
+ */
+const climbStairs = function(n) {
+    const sqrt_5 = Math.sqrt(5);
+    const fib_n = Math.pow((1 + sqrt_5) / 2, n + 1) - Math.pow((1 - sqrt_5) / 2,n + 1);
+    return Math.round(fib_n / sqrt_5);
+};
+console.log(climbStairs(50))
